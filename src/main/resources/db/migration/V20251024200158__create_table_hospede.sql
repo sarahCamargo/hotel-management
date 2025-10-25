@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS hospede (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    documento VARCHAR(20) NOT NULL,
+    telefone VARCHAR(20) NOT NULL
+);

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+SCRIPT_NAME=$1
+
+CURRENT_PATH="$PWD"
+DIRECTORY="${CURRENT_PATH}/src/main/resources/db/migration/"
+
+CURRENT_DATE=$(date +"%Y%m%d%H%M%S")
+SCRIPT_FULL_NAME="V${CURRENT_DATE}__${SCRIPT_NAME}.sql"
+MIGRATION="${DIRECTORY}${SCRIPT_FULL_NAME}"
+
+echo "Gerando migration: [${MIGRATION}]"
+echo "" > "${MIGRATION}"
