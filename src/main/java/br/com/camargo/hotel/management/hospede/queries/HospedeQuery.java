@@ -20,9 +20,10 @@ public class HospedeQuery implements IHospedeQuery {
     private final HospedeFactory factory;
 
     @Override
-    public Page<HospedeVO> findAll(Paginator paginator) {
+    public Page<HospedeVO> findAll(HospedeFiltros filtros, Paginator paginator) {
+        final var spec = HospedeSpecification.buildSpecification(filtros);
         final var page = PageRequest.of(paginator.getPageNumber(), paginator.getPageSize(), Sort.by("id").descending());
-        final var result = repository.findAll(null, page);
+        final var result = repository.findAll(spec, page);
 
         final var content = result.getContent().stream()
                 .map(factory::toVO)

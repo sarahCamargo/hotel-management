@@ -5,6 +5,7 @@ import br.com.camargo.hotel.management.commons.pagination.Paginator;
 import br.com.camargo.hotel.management.commons.viewobjects.ResponseVO;
 import br.com.camargo.hotel.management.commons.exceptions.MissingEntityException;
 import br.com.camargo.hotel.management.hospede.factories.HospedeFactory;
+import br.com.camargo.hotel.management.hospede.queries.HospedeFiltros;
 import br.com.camargo.hotel.management.hospede.queries.IHospedeQuery;
 import br.com.camargo.hotel.management.hospede.repositories.IHospedeRepository;
 import br.com.camargo.hotel.management.hospede.domain.dtos.HospedeDTO;
@@ -24,8 +25,8 @@ public class HospedeService {
     private final IHospedeRepository repository;
     private final HospedeFactory factory;
 
-    public ResponseEntity<Page<HospedeVO>> visualizarHospedes(Paginator paginator) {
-        final Page<HospedeVO> hospedes = query.findAll(paginator);
+    public ResponseEntity<Page<HospedeVO>> visualizarHospedes(HospedeFiltros filtros, Paginator paginator) {
+        final Page<HospedeVO> hospedes = query.findAll(filtros, paginator);
 
         if (hospedes == null || hospedes.getContent().isEmpty()) {
             return ResponseEntity.noContent().build();

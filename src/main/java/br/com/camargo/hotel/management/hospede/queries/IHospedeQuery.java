@@ -5,5 +5,5 @@ import br.com.camargo.hotel.management.commons.pagination.Paginator;
 import br.com.camargo.hotel.management.hospede.domain.viewobjects.HospedeVO;
 
 public interface IHospedeQuery {
-    Page<HospedeVO> findAll(Paginator paginator);
+    Page<HospedeVO> findAll(HospedeFiltros filtros, Paginator paginator);
 }

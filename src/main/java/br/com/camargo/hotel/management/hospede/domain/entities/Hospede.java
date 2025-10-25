@@ -23,8 +23,4 @@ public class Hospede {
 
     @Column(name = "telefone")
     private String telefone;
-
-    public Hospede(Long id) {
-        this.id = id;
-    }
 }

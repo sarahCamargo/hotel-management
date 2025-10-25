@@ -3,6 +3,7 @@ package br.com.camargo.hotel.management.controllers;
 import br.com.camargo.hotel.management.commons.pagination.Page;
 import br.com.camargo.hotel.management.commons.pagination.Paginator;
 import br.com.camargo.hotel.management.commons.viewobjects.ResponseVO;
+import br.com.camargo.hotel.management.hospede.queries.HospedeFiltros;
 import br.com.camargo.hotel.management.hospede.services.HospedeService;
 import br.com.camargo.hotel.management.hospede.domain.dtos.HospedeDTO;
 import br.com.camargo.hotel.management.hospede.domain.viewobjects.HospedeVO;
@@ -22,9 +23,12 @@ public class HospedeController {
     private final HospedeService service;
 
     @GetMapping
-    @Operation(summary = "Lista todos os hóspedes", description = "Retorna todos os hóspedes cadastrados no sistema")
-    public ResponseEntity<Page<HospedeVO>> listarHospedes(Paginator paginator) {
-        return service.visualizarHospedes(paginator);
+    @Operation(
+            summary = "Listar hóspedes",
+            description = "Retorna uma lista paginada de todos os hóspedes do hotel, podendo receber parâmetros de paginação e filtros."
+    )
+    public ResponseEntity<Page<HospedeVO>> listarHospedes(@ModelAttribute HospedeFiltros filtros, Paginator paginator) {
+        return service.visualizarHospedes(filtros, paginator);
     }
 
     @GetMapping("/{id}")

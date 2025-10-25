@@ -26,7 +26,7 @@ public class EstadiaController {
             summary = "Listar estadias",
             description = "Retorna uma lista paginada de todas as estadias do hotel, podendo receber parâmetros de paginação."
     )
-    public ResponseEntity<Page<EstadiaVO>> visualizarEstadias(@RequestParam Paginator paginator) {
+    public ResponseEntity<Page<EstadiaVO>> visualizarEstadias(Paginator paginator) {
         return service.visualizarEstadias(paginator);
     }
 
