@@ -24,7 +24,7 @@ public class HospedeService {
     private final IHospedeRepository repository;
     private final HospedeFactory factory;
 
-    public ResponseEntity<Page<HospedeVO>> listarHospedes(Paginator paginator) {
+    public ResponseEntity<Page<HospedeVO>> visualizarHospedes(Paginator paginator) {
         final Page<HospedeVO> hospedes = query.findAll(paginator);
 
         if (hospedes == null || hospedes.getContent().isEmpty()) {
@@ -41,19 +41,11 @@ public class HospedeService {
 
     @Transactional
     public ResponseEntity<ResponseVO<HospedeVO>> cadastrarHospede(HospedeDTO hospedeDTO) {
-        if (hospedeDTO == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        final Hospede saved = repository.save(factory.toEntity(hospedeDTO));
+        final Hospede saved = repository.save(factory.fromDTO(hospedeDTO));
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ResponseVO.<HospedeVO>builder()
-                        .message("Hóspede criado com sucesso.")
-                        .data(factory.toVO(saved))
-                        .build()
-                );
+                .body(factory.responseMessage(saved, "Hóspede criado com sucesso."));
     }
 
     @Transactional
@@ -64,13 +56,9 @@ public class HospedeService {
             return ResponseEntity.notFound().build();
         }
 
-        final Hospede saved = repository.save(factory.toEntity(id, hospedeDTO));
+        final Hospede saved = repository.save(factory.fromDTO(id, hospedeDTO));
 
-        return ResponseEntity.ok(
-                ResponseVO.<HospedeVO>builder()
-                        .message("Hóspede alterado com sucesso.")
-                        .data(factory.toVO(saved))
-                        .build());
+        return ResponseEntity.ok(factory.responseMessage(saved, "Hóspede alterado com sucesso."));
     }
 
     @Transactional
@@ -83,14 +71,10 @@ public class HospedeService {
 
         repository.deleteById(id);
 
-        return ResponseEntity.ok(
-                ResponseVO.<HospedeVO>builder()
-                        .message("Hóspede [" + id + "] excluido com sucesso.")
-                        .build());
+        return ResponseEntity.noContent().build();
     }
 
-    @Transactional
-    private Hospede getHospede(Long id) {
+    public Hospede getHospede(Long id) {
         return repository.findById(id).orElseThrow(() -> new MissingEntityException("Hóspede", id));
     }
 }

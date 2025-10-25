@@ -1,5 +1,6 @@
 package br.com.camargo.hotel.management.hospede.factories;
 
+import br.com.camargo.hotel.management.commons.viewobjects.ResponseVO;
 import br.com.camargo.hotel.management.hospede.domain.dtos.HospedeDTO;
 import br.com.camargo.hotel.management.hospede.domain.entities.Hospede;
 import br.com.camargo.hotel.management.hospede.domain.viewobjects.HospedeVO;
@@ -17,16 +18,23 @@ public class HospedeFactory {
                 .build();
     }
 
-    public Hospede toEntity(HospedeDTO hospedeDTO) {
-        return toEntity(null, hospedeDTO);
+    public Hospede fromDTO(HospedeDTO hospedeDTO) {
+        return fromDTO(null, hospedeDTO);
     }
 
-    public Hospede toEntity(Long id, HospedeDTO hospedeDTO) {
+    public Hospede fromDTO(Long id, HospedeDTO hospedeDTO) {
         return Hospede.builder()
                 .id(id)
                 .nome(hospedeDTO.getNome())
                 .documento(hospedeDTO.getDocumento())
                 .telefone(hospedeDTO.getTelefone())
+                .build();
+    }
+
+    public ResponseVO<HospedeVO> responseMessage(Hospede hospede, String message) {
+        return ResponseVO.<HospedeVO>builder()
+                .message(message)
+                .data(toVO(hospede))
                 .build();
     }
 }

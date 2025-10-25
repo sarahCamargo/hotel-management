@@ -1,14 +1,16 @@
 package br.com.camargo.hotel.management.reserva.services;
 
+import br.com.camargo.hotel.management.commons.exceptions.BusinessException;
 import br.com.camargo.hotel.management.commons.pagination.Page;
 import br.com.camargo.hotel.management.commons.pagination.Paginator;
 import br.com.camargo.hotel.management.commons.viewobjects.ResponseVO;
 import br.com.camargo.hotel.management.commons.exceptions.MissingEntityException;
+import br.com.camargo.hotel.management.hospede.domain.entities.Hospede;
+import br.com.camargo.hotel.management.hospede.services.HospedeService;
 import br.com.camargo.hotel.management.reserva.factories.ReservaFactory;
 import br.com.camargo.hotel.management.reserva.queries.IReservaQuery;
 import br.com.camargo.hotel.management.reserva.repositories.IReservaRepository;
 import br.com.camargo.hotel.management.reserva.domain.dtos.ReservaDTO;
-import br.com.camargo.hotel.management.reserva.domain.enums.StatusReserva;
 import br.com.camargo.hotel.management.reserva.domain.entities.Reserva;
 import br.com.camargo.hotel.management.reserva.domain.viewobjects.ReservaVO;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +30,7 @@ public class ReservaService {
     private final IReservaQuery query;
     private final IReservaRepository repository;
     private final ReservaFactory factory;
+    private final HospedeService hospedeService;
     private final CalculadoraReservaService calculadoraReservaService;
 
     public ResponseEntity<Page<ReservaVO>> visualizarReservas(Paginator paginator) {
@@ -40,26 +45,19 @@ public class ReservaService {
 
     public ResponseEntity<ReservaVO> buscarReserva(Long id) {
         final Reserva reserva = getReserva(id);
-
         return ResponseEntity.ok(factory.toVO(reserva));
     }
 
     @Transactional
     public ResponseEntity<ResponseVO<ReservaVO>> reservar(ReservaDTO reservaDTO) {
-        if (reservaDTO == null) {
-            return ResponseEntity.badRequest().build();
-        }
+        validarDatas(reservaDTO);
+        validarReservaDuplicada(reservaDTO);
 
-        final BigDecimal valorTotalPrevisto = calculadoraReservaService.calcularValorReserva(reservaDTO);
-        final Reserva saved = repository.save(factory.toEntity(reservaDTO, valorTotalPrevisto));
+        final Reserva saved = salvarReserva(null, reservaDTO);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ResponseVO.<ReservaVO>builder()
-                        .message("Reserva criada com sucesso.")
-                        .data(factory.toVO(saved))
-                        .build()
-                );
+                .body(factory.responseMessage(saved, "Reserva criada com sucesso."));
     }
 
     @Transactional
@@ -70,30 +68,23 @@ public class ReservaService {
             return ResponseEntity.notFound().build();
         }
 
-        final BigDecimal valorTotalPrevisto = calculadoraReservaService.calcularValorReserva(reservaDTO);
-        final Reserva saved = repository.save(factory.toEntity(id, valorTotalPrevisto, reservaDTO));
+        validarDatas(reservaDTO);
+        validarReservaDuplicada(reservaDTO);
 
-        return ResponseEntity.ok(
-                ResponseVO.<ReservaVO>builder()
-                        .message("Reserva alterada com sucesso.")
-                        .data(factory.toVO(saved))
-                        .build());
+        final Reserva saved = salvarReserva(id, reservaDTO);
+
+        return ResponseEntity.ok(factory.responseMessage(saved, "Reserva alterada com sucesso."));
     }
 
     @Transactional
     public ResponseEntity<ResponseVO<ReservaVO>> cancelarReserva(Long id) {
         final Reserva reserva = getReserva(id);
 
-        reserva.setStatus(StatusReserva.CANCELADA);
+        reserva.cancelar();
 
         final Reserva saved = repository.save(reserva);
 
-        return ResponseEntity.ok(
-                ResponseVO.<ReservaVO>builder()
-                        .message("Reserva cancelada com sucesso.")
-                        .data(factory.toVO(saved))
-                        .build());
-
+        return ResponseEntity.ok(factory.responseMessage(saved, "Reserva cancelada com sucesso."));
     }
 
     @Transactional
@@ -106,13 +97,48 @@ public class ReservaService {
 
         repository.deleteById(id);
 
-        return ResponseEntity.ok(
-                ResponseVO.<ReservaVO>builder()
-                        .message("Reserva [" + id + "] excluída com sucesso.")
-                        .build());
+        return ResponseEntity.noContent().build();
     }
 
-    private Reserva getReserva(Long id) {
+    public Reserva getReserva(Long id) {
         return repository.findById(id).orElseThrow(() -> new MissingEntityException("Reserva", id));
+    }
+
+    @Transactional
+    public Reserva salvarReserva(Long id, ReservaDTO reservaDTO) {
+        final Hospede hospede = hospedeService.getHospede(reservaDTO.getHospedeId());
+
+        final BigDecimal valorTotalPrevisto = calculadoraReservaService.calcularValorReserva(
+                reservaDTO.getDataEntradaPrevista(),
+                reservaDTO.getDataSaidaPrevista(),
+                reservaDTO.getAdicionalGaragem()
+        );
+
+        return repository.save(factory.fromDTO(id, reservaDTO, valorTotalPrevisto, hospede));
+    }
+
+    private void validarDatas(ReservaDTO reservaDTO) {
+        LocalDate entrada = reservaDTO.getDataEntradaPrevista();
+        LocalDate saida = reservaDTO.getDataSaidaPrevista();
+
+        if (entrada == null || saida == null) {
+            throw new BusinessException("As datas de entrada e saída são obrigatórias.");
+        }
+
+        if (!saida.isAfter(entrada)) {
+            throw new BusinessException("A data de saída deve ser posterior à data de entrada.");
+        }
+    }
+
+    private void validarReservaDuplicada(ReservaDTO reservaDTO) {
+        Long hospedeId = reservaDTO.getHospedeId();
+        LocalDate entrada = reservaDTO.getDataEntradaPrevista();
+        LocalDate saida = reservaDTO.getDataSaidaPrevista();
+
+        Optional<Reserva> existente = repository.findByHospedeIdAndPeriodo(hospedeId, entrada, saida);
+
+        if (existente.isPresent()) {
+            throw new BusinessException("Já existe uma reserva para este hóspede nesse período.");
+        }
     }
 }

@@ -1,5 +1,6 @@
 package br.com.camargo.hotel.management.reserva.domain.entities;
 
+import br.com.camargo.hotel.management.commons.exceptions.BusinessException;
 import br.com.camargo.hotel.management.hospede.domain.entities.Hospede;
 import br.com.camargo.hotel.management.reserva.domain.enums.StatusReserva;
 import jakarta.persistence.*;
@@ -40,4 +41,11 @@ public class Reserva {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private StatusReserva status;
+
+    public void cancelar() {
+        if (this.status == StatusReserva.CANCELADA) {
+            throw new BusinessException("A Reserva já está cancelada");
+        }
+        this.status = StatusReserva.CANCELADA;
+    }
 }

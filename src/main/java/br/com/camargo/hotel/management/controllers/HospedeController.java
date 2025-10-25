@@ -20,7 +20,7 @@ public class HospedeController {
 
     @GetMapping
     public ResponseEntity<Page<HospedeVO>> listarHospedes(Paginator paginator) {
-        return service.listarHospedes(paginator);
+        return service.visualizarHospedes(paginator);
     }
 
     @GetMapping("/{id}")

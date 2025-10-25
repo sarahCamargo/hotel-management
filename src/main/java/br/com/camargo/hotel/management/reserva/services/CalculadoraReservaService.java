@@ -1,23 +1,22 @@
 package br.com.camargo.hotel.management.reserva.services;
 
 import br.com.camargo.hotel.management.commons.enums.TipoTarifa;
-import br.com.camargo.hotel.management.reserva.domain.dtos.ReservaDTO;
+import br.com.camargo.hotel.management.commons.util.DateUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 @Service
 public class CalculadoraReservaService {
 
-    public BigDecimal calcularValorReserva(ReservaDTO reservaDTO) {
-        final long qtdDias = contarDias(reservaDTO.getDataEntradaPrevista(), reservaDTO.getDataSaidaPrevista());
-        final long qtdFinaisSemana = contarFinaisSemana(reservaDTO.getDataEntradaPrevista(), reservaDTO.getDataSaidaPrevista());
+    public BigDecimal calcularValorReserva(LocalDate dataEntradaPrevista, LocalDate dataSaidaPrevista, boolean hasAdicionalGaragem) {
+        final long qtdDias = contarDias(dataEntradaPrevista, dataSaidaPrevista);
+        final long qtdFinaisSemana = contarFinaisSemana(dataEntradaPrevista, dataSaidaPrevista);
         final long qtdDiasUteis = qtdDias - qtdFinaisSemana;
 
         final BigDecimal valorHospedagem = calcularValorHospedagem(qtdDiasUteis, qtdFinaisSemana);
-        final BigDecimal valorGaragem = calcularValorGaragem(qtdDiasUteis, qtdFinaisSemana, reservaDTO.getAdicionalGaragem());
+        final BigDecimal valorGaragem = calcularValorGaragem(qtdDiasUteis, qtdFinaisSemana, hasAdicionalGaragem);
 
         return valorHospedagem.add(valorGaragem);
     }
@@ -25,7 +24,7 @@ public class CalculadoraReservaService {
     public Long contarFinaisSemana(LocalDate dataEntrada, LocalDate dataSaida) {
         return dataEntrada
                 .datesUntil(dataSaida)
-                .filter(this::isFinalDeSemana)
+                .filter(DateUtils::isFinalDeSemana)
                 .count();
     }
 
@@ -51,10 +50,5 @@ public class CalculadoraReservaService {
         final BigDecimal valorGaragemFinaisDeSemana = TipoTarifa.GARAGEM_FIM_SEMANA.getValor().multiply(BigDecimal.valueOf(finaisDeSemana));
 
         return valorGaragemDiasUteis.add(valorGaragemFinaisDeSemana);
-    }
-
-    private boolean isFinalDeSemana(LocalDate data) {
-        DayOfWeek dia = data.getDayOfWeek();
-        return dia == DayOfWeek.SATURDAY || dia == DayOfWeek.SUNDAY;
     }
 }
