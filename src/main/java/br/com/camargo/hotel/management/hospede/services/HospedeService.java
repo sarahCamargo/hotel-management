@@ -11,6 +11,7 @@ import br.com.camargo.hotel.management.hospede.domain.dtos.HospedeDTO;
 import br.com.camargo.hotel.management.hospede.domain.entities.Hospede;
 import br.com.camargo.hotel.management.hospede.domain.viewobjects.HospedeVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,16 +42,18 @@ public class HospedeService {
     @Transactional
     public ResponseEntity<ResponseVO<HospedeVO>> cadastrarHospede(HospedeDTO hospedeDTO) {
         if (hospedeDTO == null) {
-            return null;
+            return ResponseEntity.badRequest().build();
         }
 
         final Hospede saved = repository.save(factory.toEntity(hospedeDTO));
 
-        return ResponseEntity.ok(
-                ResponseVO.<HospedeVO>builder()
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ResponseVO.<HospedeVO>builder()
                         .message("Hóspede criado com sucesso.")
                         .data(factory.toVO(saved))
-                        .build());
+                        .build()
+                );
     }
 
     @Transactional

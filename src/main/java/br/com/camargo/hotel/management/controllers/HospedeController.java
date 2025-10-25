@@ -6,6 +6,7 @@ import br.com.camargo.hotel.management.commons.viewobjects.ResponseVO;
 import br.com.camargo.hotel.management.hospede.services.HospedeService;
 import br.com.camargo.hotel.management.hospede.domain.dtos.HospedeDTO;
 import br.com.camargo.hotel.management.hospede.domain.viewobjects.HospedeVO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,12 +29,12 @@ public class HospedeController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseVO<HospedeVO>> cadastrarHospede(@RequestBody HospedeDTO hospedeDTO) {
+    public ResponseEntity<ResponseVO<HospedeVO>> cadastrarHospede(@RequestBody @Valid HospedeDTO hospedeDTO) {
         return service.cadastrarHospede(hospedeDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseVO<HospedeVO>> alterarHospede(@PathVariable Long id, @RequestBody HospedeDTO hospedeDTO) {
+    public ResponseEntity<ResponseVO<HospedeVO>> alterarHospede(@PathVariable Long id, @RequestBody @Valid HospedeDTO hospedeDTO) {
         return service.alterarHospede(id, hospedeDTO);
     }
 

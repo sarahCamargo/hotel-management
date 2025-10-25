@@ -12,12 +12,12 @@ import br.com.camargo.hotel.management.reserva.domain.enums.StatusReserva;
 import br.com.camargo.hotel.management.reserva.domain.entities.Reserva;
 import br.com.camargo.hotel.management.reserva.domain.viewobjects.ReservaVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-
 
 @Service
 @RequiredArgsConstructor
@@ -47,17 +47,19 @@ public class ReservaService {
     @Transactional
     public ResponseEntity<ResponseVO<ReservaVO>> reservar(ReservaDTO reservaDTO) {
         if (reservaDTO == null) {
-            return null;
+            return ResponseEntity.badRequest().build();
         }
 
         final BigDecimal valorTotalPrevisto = calculadoraReservaService.calcularValorReserva(reservaDTO);
         final Reserva saved = repository.save(factory.toEntity(reservaDTO, valorTotalPrevisto));
 
-        return ResponseEntity.ok(
-                ResponseVO.<ReservaVO>builder()
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ResponseVO.<ReservaVO>builder()
                         .message("Reserva criada com sucesso.")
                         .data(factory.toVO(saved))
-                        .build());
+                        .build()
+                );
     }
 
     @Transactional
