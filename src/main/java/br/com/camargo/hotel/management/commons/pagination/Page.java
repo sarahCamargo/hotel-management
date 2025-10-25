@@ -1,4 +1,4 @@
-package br.com.camargo.hotel.management.commons;
+package br.com.camargo.hotel.management.commons.pagination;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

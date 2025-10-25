@@ -1,10 +1,10 @@
-package br.com.camargo.hotel.management.hospede.queries;
+package br.com.camargo.hotel.management.reserva.queries;
 
 import br.com.camargo.hotel.management.commons.pagination.Page;
 import br.com.camargo.hotel.management.commons.pagination.Paginator;
-import br.com.camargo.hotel.management.hospede.factories.HospedeFactory;
-import br.com.camargo.hotel.management.hospede.repositories.IHospedeRepository;
-import br.com.camargo.hotel.management.hospede.domain.viewobjects.HospedeVO;
+import br.com.camargo.hotel.management.reserva.factories.ReservaFactory;
+import br.com.camargo.hotel.management.reserva.repositories.IReservaRepository;
+import br.com.camargo.hotel.management.reserva.domain.viewobjects.ReservaVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -14,13 +14,13 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class HospedeQuery implements IHospedeQuery {
+public class ReservaQuery implements IReservaQuery {
 
-    private final IHospedeRepository repository;
-    private final HospedeFactory factory;
+    private final IReservaRepository repository;
+    private final ReservaFactory factory;
 
     @Override
-    public Page<HospedeVO> findAll(Paginator paginator) {
+    public Page<ReservaVO> findAll(Paginator paginator) {
         final var page = PageRequest.of(paginator.getPageNumber(), paginator.getPageSize(), Sort.by("id").descending());
         final var result = repository.findAll(null, page);
 
@@ -28,7 +28,7 @@ public class HospedeQuery implements IHospedeQuery {
                 .map(factory::toVO)
                 .collect(Collectors.toList());
 
-        return Page.<HospedeVO>builder()
+        return Page.<ReservaVO>builder()
                 .content(content)
                 .numberOfElements(result.getNumberOfElements())
                 .isLastPage(result.isLast())

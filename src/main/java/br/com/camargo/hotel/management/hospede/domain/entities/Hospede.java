@@ -1,17 +1,14 @@
-package br.com.camargo.hotel.management.hospede.structures.persistence;
+package br.com.camargo.hotel.management.hospede.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
 @Entity
 @Table(name = "hospede")
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Hospede {
 
     @Id
@@ -26,4 +23,8 @@ public class Hospede {
 
     @Column(name = "telefone")
     private String telefone;
+
+    public Hospede(Long id) {
+        this.id = id;
+    }
 }

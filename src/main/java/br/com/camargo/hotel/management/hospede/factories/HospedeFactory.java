@@ -1,8 +1,8 @@
 package br.com.camargo.hotel.management.hospede.factories;
 
-import br.com.camargo.hotel.management.hospede.structures.dtos.HospedeDTO;
-import br.com.camargo.hotel.management.hospede.structures.persistence.Hospede;
-import br.com.camargo.hotel.management.hospede.structures.viewobjects.HospedeVO;
+import br.com.camargo.hotel.management.hospede.domain.dtos.HospedeDTO;
+import br.com.camargo.hotel.management.hospede.domain.entities.Hospede;
+import br.com.camargo.hotel.management.hospede.domain.viewobjects.HospedeVO;
 import org.springframework.stereotype.Component;
 
 @Component

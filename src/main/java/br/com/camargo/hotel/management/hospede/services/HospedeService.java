@@ -1,20 +1,19 @@
 package br.com.camargo.hotel.management.hospede.services;
 
-import br.com.camargo.hotel.management.commons.Page;
-import br.com.camargo.hotel.management.commons.Paginator;
-import br.com.camargo.hotel.management.commons.ResponseVO;
+import br.com.camargo.hotel.management.commons.pagination.Page;
+import br.com.camargo.hotel.management.commons.pagination.Paginator;
+import br.com.camargo.hotel.management.commons.viewobjects.ResponseVO;
+import br.com.camargo.hotel.management.commons.exceptions.MissingEntityException;
 import br.com.camargo.hotel.management.hospede.factories.HospedeFactory;
 import br.com.camargo.hotel.management.hospede.queries.IHospedeQuery;
 import br.com.camargo.hotel.management.hospede.repositories.IHospedeRepository;
-import br.com.camargo.hotel.management.hospede.structures.dtos.HospedeDTO;
-import br.com.camargo.hotel.management.hospede.structures.persistence.Hospede;
-import br.com.camargo.hotel.management.hospede.structures.viewobjects.HospedeVO;
+import br.com.camargo.hotel.management.hospede.domain.dtos.HospedeDTO;
+import br.com.camargo.hotel.management.hospede.domain.entities.Hospede;
+import br.com.camargo.hotel.management.hospede.domain.viewobjects.HospedeVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class HospedeService {
     private final IHospedeRepository repository;
     private final HospedeFactory factory;
 
-    public ResponseEntity<Page<HospedeVO>> findAll(Paginator paginator) {
+    public ResponseEntity<Page<HospedeVO>> listarHospedes(Paginator paginator) {
         final Page<HospedeVO> hospedes = query.findAll(paginator);
 
         if (hospedes == null || hospedes.getContent().isEmpty()) {
@@ -34,17 +33,13 @@ public class HospedeService {
         return ResponseEntity.ok(hospedes);
     }
 
-    public ResponseEntity<HospedeVO> findById(Long id) {
-        final Optional<Hospede> hospede = repository.findById(id);
-
-        if (hospede.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(hospede.map(factory::toVO).orElse(null));
+    public ResponseEntity<HospedeVO> buscarHospede(Long id) {
+        final Hospede hospede = getHospede(id);
+        return ResponseEntity.ok(factory.toVO(hospede));
     }
 
-    public ResponseEntity<ResponseVO<HospedeVO>> create(HospedeDTO hospedeDTO) {
+    @Transactional
+    public ResponseEntity<ResponseVO<HospedeVO>> cadastrarHospede(HospedeDTO hospedeDTO) {
         if (hospedeDTO == null) {
             return null;
         }
@@ -58,7 +53,8 @@ public class HospedeService {
                         .build());
     }
 
-    public ResponseEntity<ResponseVO<HospedeVO>> update(Long id, HospedeDTO hospedeDTO) {
+    @Transactional
+    public ResponseEntity<ResponseVO<HospedeVO>> alterarHospede(Long id, HospedeDTO hospedeDTO) {
         final boolean exists = repository.existsById(id);
 
         if (!exists) {
@@ -74,7 +70,8 @@ public class HospedeService {
                         .build());
     }
 
-    public ResponseEntity<ResponseVO<HospedeVO>> delete(Long id) {
+    @Transactional
+    public ResponseEntity<ResponseVO<HospedeVO>> removerHospede(Long id) {
         final boolean exists = repository.existsById(id);
 
         if (!exists) {
@@ -87,5 +84,10 @@ public class HospedeService {
                 ResponseVO.<HospedeVO>builder()
                         .message("Hóspede [" + id + "] excluido com sucesso.")
                         .build());
+    }
+
+    @Transactional
+    private Hospede getHospede(Long id) {
+        return repository.findById(id).orElseThrow(() -> new MissingEntityException("Hóspede", id));
     }
 }

@@ -1,6 +1,6 @@
 package br.com.camargo.hotel.management.hospede.repositories;
 
-import br.com.camargo.hotel.management.hospede.structures.persistence.Hospede;
+import br.com.camargo.hotel.management.hospede.domain.entities.Hospede;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

@@ -1,4 +1,4 @@
-package br.com.camargo.hotel.management.commons;
+package br.com.camargo.hotel.management.commons.viewobjects;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Builder;

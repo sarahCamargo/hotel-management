@@ -1,6 +1,6 @@
 package br.com.camargo.hotel.management.hospede.repositories;
 
-import br.com.camargo.hotel.management.hospede.structures.persistence.Hospede;
+import br.com.camargo.hotel.management.hospede.domain.entities.Hospede;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;

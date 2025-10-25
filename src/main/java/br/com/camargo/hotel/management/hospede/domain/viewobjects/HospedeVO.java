@@ -1,4 +1,4 @@
-package br.com.camargo.hotel.management.hospede.structures.dtos;
+package br.com.camargo.hotel.management.hospede.domain.viewobjects;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class HospedeDTO {
+public class HospedeVO {
+    private Long id;
     private String nome;
     private String documento;
     private String telefone;
