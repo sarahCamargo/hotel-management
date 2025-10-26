@@ -39,7 +39,7 @@ public class EstadiaController {
         return service.buscarEstadia(id);
     }
 
-    @PostMapping("/checkin")
+    @PostMapping("/check-in")
     @Operation(
             summary = "Realizar check-in",
             description = "Registra uma nova estadia e realiza o check-in do hóspede conforme os dados fornecidos no corpo da requisição."
@@ -48,7 +48,7 @@ public class EstadiaController {
         return service.realizarCheckIn(estadiaDTO);
     }
 
-    @PostMapping("/checkout")
+    @PostMapping("/check-out")
     @Operation(
             summary = "Realizar check-out",
             description = "Finaliza a estadia de um hóspede e realiza o check-out conforme os dados fornecidos no corpo da requisição."

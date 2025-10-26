@@ -20,4 +20,6 @@ public interface IHospedeRepository {
     void deleteById(Long id);
 
     List<Hospede> findByNomeOrCpfOrTelefone(String nome, String cpf, String telefone);
+
+    List<Hospede> findHospedesCheckOut();
 }

@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/hospedes")
 @RequiredArgsConstructor
@@ -65,5 +67,14 @@ public class HospedeController {
     )
     public ResponseEntity<ResponseVO<HospedeVO>> removerHospede(@PathVariable Long id) {
         return service.removerHospede(id);
+    }
+
+    @GetMapping("/check-out")
+    @Operation(
+            summary = "Lista Hóspedes Check-out",
+            description = "Lista hóspedes que já realizaram check-out e não estão mais no hotel"
+    )
+    public ResponseEntity<List<HospedeVO>> listarHospedesCheckOut() {
+        return service.listarHospedesCheckOut();
     }
 }

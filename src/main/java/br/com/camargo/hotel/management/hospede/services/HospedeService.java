@@ -89,4 +89,12 @@ public class HospedeService {
     public Hospede getHospede(Long id) {
         return repository.findById(id).orElseThrow(() -> new MissingEntityException("Hóspede", id));
     }
+
+    public ResponseEntity<List<HospedeVO>> listarHospedesCheckOut() {
+        List<HospedeVO> hospedes = repository.findHospedesCheckOut().stream()
+                .map(factory::toVO)
+                .toList();
+
+        return ResponseEntity.ok(hospedes);
+    }
 }
