@@ -16,8 +16,4 @@ public interface IEstadiaRepository {
     Estadia save(Estadia hospede);
 
     boolean existsByReserva_IdAndDataHoraSaidaIsNull(Long reservaId);
-
-    boolean existsById(Long id);
-
-    void deleteById(Long id);
 }

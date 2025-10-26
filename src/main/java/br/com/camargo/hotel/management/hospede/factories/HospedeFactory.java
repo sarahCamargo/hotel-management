@@ -13,7 +13,7 @@ public class HospedeFactory {
         return HospedeVO.builder()
                 .id(entity.getId())
                 .nome(entity.getNome())
-                .documento(entity.getDocumento())
+                .cpf(entity.getCpf())
                 .telefone(entity.getTelefone())
                 .build();
     }
@@ -26,7 +26,7 @@ public class HospedeFactory {
         return Hospede.builder()
                 .id(id)
                 .nome(hospedeDTO.getNome())
-                .documento(hospedeDTO.getDocumento())
+                .cpf(hospedeDTO.getCpf())
                 .telefone(hospedeDTO.getTelefone())
                 .build();
     }

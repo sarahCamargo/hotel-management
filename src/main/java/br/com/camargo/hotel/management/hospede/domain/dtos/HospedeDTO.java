@@ -16,15 +16,23 @@ public class HospedeDTO {
 
     @NotBlank(message = "O nome do hóspede é obrigatório")
     @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres")
+    @Pattern(
+            regexp = "^[a-zA-ZÀ-ÿ\\s']+$",
+            message = "O nome deve conter apenas letras, espaços e apóstrofos"
+    )
     private String nome;
 
-    @NotBlank(message = "O documento é obrigatório")
-    private String documento;
+    @NotBlank(message = "O CPF é obrigatório")
+    @Pattern(
+            regexp = "^\\d{11}$",
+            message = "O CPF deve conter exatamente 11 dígitos numéricos"
+    )
+    private String cpf;
 
     @NotBlank(message = "O telefone é obrigatório")
     @Pattern(
-            regexp = "\\(?\\d{2}\\)?\\s?9?\\d{4}-?\\d{4}",
-            message = "Telefone inválido. Formato esperado: (99) 99999-9999 ou 99999-9999"
+            regexp = "^\\d{10,11}$",
+            message = "O telefone deve conter 10 ou 11 dígitos numéricos no formato DDD999999999."
     )
     private String telefone;
 }

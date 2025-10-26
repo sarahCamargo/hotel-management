@@ -32,5 +32,4 @@ public class Estadia {
 
     @Column(name = "valor_total_final")
     private BigDecimal valorTotalFinal;
-
 }

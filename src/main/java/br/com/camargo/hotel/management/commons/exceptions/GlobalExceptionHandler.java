@@ -2,17 +2,16 @@ package br.com.camargo.hotel.management.commons.exceptions;
 
 import br.com.camargo.hotel.management.commons.util.DateUtils;
 import br.com.camargo.hotel.management.commons.viewobjects.ErrorResponseVO;
+import br.com.camargo.hotel.management.commons.viewobjects.FieldErrorVO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,20 +22,20 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ErrorResponseVO> handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponseVO> handleIllegalArgument(BusinessException ex, HttpServletRequest request) {
         return buildError(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseVO> handleValidationException(MethodArgumentNotValidException ex,
                                                                      HttpServletRequest request) {
-        final Map<String, String> errors = new HashMap<>();
+        List<FieldErrorVO> fieldErrors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> new FieldErrorVO(error.getField(), error.getDefaultMessage()))
+                .toList();
 
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.put(error.getField(), error.getDefaultMessage());
-        }
-
-        return buildError(HttpStatus.BAD_REQUEST, "Erro de validação nos campos: " + errors, request);
+        return buildError(HttpStatus.BAD_REQUEST, "Erro de validação nos campos", fieldErrors, request);
     }
 
     @ExceptionHandler(Exception.class)
@@ -45,12 +44,17 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ErrorResponseVO> buildError(HttpStatus status, String message, HttpServletRequest request) {
+        return buildError(status, message, null, request);
+    }
+
+    private ResponseEntity<ErrorResponseVO> buildError(HttpStatus status, String message, List<FieldErrorVO> errors, HttpServletRequest request) {
         ErrorResponseVO error = ErrorResponseVO.builder()
                 .timestamp(DateUtils.format(LocalDateTime.now()))
                 .status(status.value())
                 .error(status.getReasonPhrase())
                 .message(message)
                 .path(request.getRequestURI())
+                .errors(errors)
                 .build();
 
         return ResponseEntity.status(status).body(error);

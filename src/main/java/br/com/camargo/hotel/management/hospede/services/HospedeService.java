@@ -5,8 +5,8 @@ import br.com.camargo.hotel.management.commons.pagination.Paginator;
 import br.com.camargo.hotel.management.commons.viewobjects.ResponseVO;
 import br.com.camargo.hotel.management.commons.exceptions.MissingEntityException;
 import br.com.camargo.hotel.management.hospede.factories.HospedeFactory;
-import br.com.camargo.hotel.management.hospede.queries.HospedeFiltros;
-import br.com.camargo.hotel.management.hospede.queries.IHospedeQuery;
+import br.com.camargo.hotel.management.hospede.queries.filter.HospedeFiltros;
+import br.com.camargo.hotel.management.hospede.queries.repository.IHospedeQuery;
 import br.com.camargo.hotel.management.hospede.repositories.IHospedeRepository;
 import br.com.camargo.hotel.management.hospede.domain.dtos.HospedeDTO;
 import br.com.camargo.hotel.management.hospede.domain.entities.Hospede;
@@ -36,8 +36,13 @@ public class HospedeService {
     }
 
     public ResponseEntity<HospedeVO> buscarHospede(Long id) {
-        final Hospede hospede = getHospede(id);
-        return ResponseEntity.ok(factory.toVO(hospede));
+        final HospedeVO hospede = query.findById(id);
+
+        if (hospede == null) {
+            throw new MissingEntityException("Hóspede", id);
+        }
+
+        return ResponseEntity.ok(hospede);
     }
 
     @Transactional

@@ -1,9 +1,16 @@
 package br.com.camargo.hotel.management.commons.util;
 
-import org.apache.commons.lang3.StringUtils;
-
 public final class SqlUtils {
-    public static String contains(String value) {
-        return "%" + StringUtils.defaultIfBlank(value, "") + "%";
+    public static boolean isLastPage(long pageNumber, long totalNumberOfElements, long pageSize) {
+        int totalPageNumber = totalPages(totalNumberOfElements, pageSize);
+        return pageNumber + 1L == (long) totalPageNumber;
+    }
+
+    public static int totalPages(long totalNumberOfElements, long pageSize) {
+        return totalNumberOfElements == 0L ? 0 : (int) Math.ceil((double) totalNumberOfElements / (double) pageSize);
+    }
+
+    public static boolean isFirstPage(long pageNumber) {
+        return pageNumber == 0L;
     }
 }

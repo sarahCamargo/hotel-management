@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/estadia")
+@RequestMapping("/estadias")
 @RequiredArgsConstructor
 @Tag(name = "Estadias", description = "Gerenciamento de check-in/check-out")
 public class EstadiaController {
