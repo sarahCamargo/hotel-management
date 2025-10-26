@@ -1,0 +1,24 @@
+name: Docker Build
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/hotel-management-api:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/hotel-management-api:${{ github.sha }}
+          secrets: |
+            "username=${{ secrets.DOCKERHUB_USERNAME }}"
+            "password=${{ secrets.DOCKERHUB_TOKEN }}"
