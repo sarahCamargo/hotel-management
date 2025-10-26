@@ -4,6 +4,7 @@ import br.com.camargo.hotel.management.commons.util.DateUtils;
 import br.com.camargo.hotel.management.commons.viewobjects.ErrorResponseVO;
 import br.com.camargo.hotel.management.commons.viewobjects.FieldErrorVO;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,22 +14,25 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingEntityException.class)
     public ResponseEntity<ErrorResponseVO> handleMissingEntity(MissingEntityException ex, HttpServletRequest request) {
+        log.error(ex.getMessage(), ex);
         return buildError(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponseVO> handleIllegalArgument(BusinessException ex, HttpServletRequest request) {
+        log.error(ex.getMessage(), ex);
         return buildError(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponseVO> handleValidationException(MethodArgumentNotValidException ex,
-                                                                     HttpServletRequest request) {
+    public ResponseEntity<ErrorResponseVO> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        log.error(ex.getMessage(), ex);
         List<FieldErrorVO> fieldErrors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -40,6 +44,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseVO> handleGeneric(Exception ex, HttpServletRequest request) {
+        log.error(ex.getMessage(), ex);
         return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno do servidor. " + ex.getMessage(), request);
     }
 

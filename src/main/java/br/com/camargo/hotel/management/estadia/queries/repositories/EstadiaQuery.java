@@ -1,8 +1,10 @@
-package br.com.camargo.hotel.management.estadia.queries;
+package br.com.camargo.hotel.management.estadia.queries.repositories;
 
 import br.com.camargo.hotel.management.commons.pagination.Page;
 import br.com.camargo.hotel.management.commons.pagination.Paginator;
 import br.com.camargo.hotel.management.estadia.factories.EstadiaFactory;
+import br.com.camargo.hotel.management.estadia.queries.filters.EstadiaFiltros;
+import br.com.camargo.hotel.management.estadia.queries.specification.EstadiaSpecification;
 import br.com.camargo.hotel.management.estadia.repositories.IEstadiaRepository;
 import br.com.camargo.hotel.management.estadia.domain.viewobjects.EstadiaVO;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +22,10 @@ public class EstadiaQuery implements IEstadiaQuery {
     private final EstadiaFactory factory;
 
     @Override
-    public Page<EstadiaVO> findAll(Paginator paginator) {
+    public Page<EstadiaVO> findAll(EstadiaFiltros filtros, Paginator paginator) {
+        final var spec = EstadiaSpecification.buildSpecification(filtros);
         final var page = PageRequest.of(paginator.getPageNumber(), paginator.getPageSize(), Sort.by("id").descending());
-        final var result = repository.findAll(null, page);
+        final var result = repository.findAll(spec, page);
 
         final var content = result.getContent().stream()
                 .map(factory::toVO)

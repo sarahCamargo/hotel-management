@@ -15,6 +15,8 @@ public class HospedeFactory {
                 .nome(entity.getNome())
                 .cpf(entity.getCpf())
                 .telefone(entity.getTelefone())
+                .valorTotal("-")
+                .valorUltimaHospedagem("-")
                 .build();
     }
 

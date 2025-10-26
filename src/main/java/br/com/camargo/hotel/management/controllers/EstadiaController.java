@@ -5,6 +5,7 @@ import br.com.camargo.hotel.management.commons.pagination.Paginator;
 import br.com.camargo.hotel.management.commons.viewobjects.ResponseVO;
 import br.com.camargo.hotel.management.estadia.domain.dtos.EstadiaDTO;
 import br.com.camargo.hotel.management.estadia.domain.viewobjects.EstadiaVO;
+import br.com.camargo.hotel.management.estadia.queries.filters.EstadiaFiltros;
 import br.com.camargo.hotel.management.estadia.services.EstadiaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,8 +27,8 @@ public class EstadiaController {
             summary = "Listar estadias",
             description = "Retorna uma lista paginada de todas as estadias do hotel, podendo receber parâmetros de paginação."
     )
-    public ResponseEntity<Page<EstadiaVO>> visualizarEstadias(Paginator paginator) {
-        return service.visualizarEstadias(paginator);
+    public ResponseEntity<Page<EstadiaVO>> visualizarEstadias(@ModelAttribute EstadiaFiltros filtros, Paginator paginator) {
+        return service.visualizarEstadias(filtros, paginator);
     }
 
     @GetMapping("/{id}")

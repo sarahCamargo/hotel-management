@@ -6,7 +6,8 @@ import br.com.camargo.hotel.management.commons.pagination.Paginator;
 import br.com.camargo.hotel.management.commons.viewobjects.ResponseVO;
 import br.com.camargo.hotel.management.commons.exceptions.MissingEntityException;
 import br.com.camargo.hotel.management.estadia.factories.EstadiaFactory;
-import br.com.camargo.hotel.management.estadia.queries.IEstadiaQuery;
+import br.com.camargo.hotel.management.estadia.queries.filters.EstadiaFiltros;
+import br.com.camargo.hotel.management.estadia.queries.repositories.IEstadiaQuery;
 import br.com.camargo.hotel.management.estadia.repositories.IEstadiaRepository;
 import br.com.camargo.hotel.management.estadia.domain.dtos.EstadiaDTO;
 import br.com.camargo.hotel.management.estadia.domain.entities.Estadia;
@@ -35,8 +36,8 @@ public class EstadiaService {
     private final HospedeService hospedeService;
     private final ReservaService reservaService;
 
-    public ResponseEntity<Page<EstadiaVO>> visualizarEstadias(Paginator paginator) {
-        final Page<EstadiaVO> estadias = query.findAll(paginator);
+    public ResponseEntity<Page<EstadiaVO>> visualizarEstadias(EstadiaFiltros filtros, Paginator paginator) {
+        final Page<EstadiaVO> estadias = query.findAll(filtros, paginator);
 
         if (estadias == null || estadias.getContent().isEmpty()) {
             return ResponseEntity.noContent().build();
