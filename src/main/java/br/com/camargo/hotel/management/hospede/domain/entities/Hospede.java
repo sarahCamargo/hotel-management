@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "hospede")
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor()
 public class Hospede {
 
     @Id
