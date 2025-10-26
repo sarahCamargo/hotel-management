@@ -20,7 +20,7 @@ public class Estadia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "reserva_id", nullable = false, referencedColumnName = "id")
     private Reserva reserva;
 

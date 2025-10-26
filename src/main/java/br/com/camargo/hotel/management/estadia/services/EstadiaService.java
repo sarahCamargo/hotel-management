@@ -86,7 +86,7 @@ public class EstadiaService {
 
         return ResponseEntity.ok(
                 ResponseVO.<EstadiaVO>builder()
-                        .message("Estadia alterada com sucesso.")
+                        .message("Estadia finalizada com sucesso.")
                         .data(factory.toVO(saved))
                         .build());
     }

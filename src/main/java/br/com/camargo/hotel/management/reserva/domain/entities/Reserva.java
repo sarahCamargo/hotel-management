@@ -1,6 +1,7 @@
 package br.com.camargo.hotel.management.reserva.domain.entities;
 
 import br.com.camargo.hotel.management.commons.exceptions.BusinessException;
+import br.com.camargo.hotel.management.estadia.domain.entities.Estadia;
 import br.com.camargo.hotel.management.hospede.domain.entities.Hospede;
 import br.com.camargo.hotel.management.reserva.domain.enums.StatusReserva;
 import jakarta.persistence.*;
@@ -42,10 +43,22 @@ public class Reserva {
     @Column(name = "status", nullable = false)
     private StatusReserva status;
 
+    @OneToOne(mappedBy = "reserva")
+    private Estadia estadia;
+
     public void cancelar() {
-        if (this.status == StatusReserva.CANCELADA) {
-            throw new BusinessException("A Reserva já está cancelada");
+        if (this.estadia != null) {
+            throw new BusinessException("Não é possível cancelar uma reserva com check-in realizado.");
         }
+
+        if (this.status == StatusReserva.CANCELADA) {
+            throw new BusinessException("Reserva já está cancelada.");
+        }
+
+        if (this.status == StatusReserva.FINALIZADA) {
+            throw new BusinessException("Não é possível cancelar uma reserva finalizada.");
+        }
+
         this.status = StatusReserva.CANCELADA;
     }
 }
