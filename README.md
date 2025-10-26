@@ -69,7 +69,7 @@ SPRING_PROFILES_ACTIVE=dev
 ### Pré-requisitos
 
 - [Docker](https://www.docker.com/)
-- [Docker Hub]()
+- [Docker Hub](https://hub.docker.com/r/scdecamargo/hotel-management-api/tags)
 
 ### Subindo o Projeto
 ```bash
