@@ -3,6 +3,7 @@ package br.com.camargo.hotel.management.controllers;
 import br.com.camargo.hotel.management.commons.pagination.Page;
 import br.com.camargo.hotel.management.commons.pagination.Paginator;
 import br.com.camargo.hotel.management.commons.viewobjects.ResponseVO;
+import br.com.camargo.hotel.management.reserva.queries.filter.ReservaFiltros;
 import br.com.camargo.hotel.management.reserva.services.ReservaService;
 import br.com.camargo.hotel.management.reserva.domain.dtos.ReservaDTO;
 import br.com.camargo.hotel.management.reserva.domain.viewobjects.ReservaVO;
@@ -26,8 +27,8 @@ public class ReservaController {
             summary = "Listar reservas",
             description = "Retorna uma lista paginada de todas as reservas registradas no sistema."
     )
-    public ResponseEntity<Page<ReservaVO>> visualizarReservas(Paginator paginator) {
-        return service.visualizarReservas(paginator);
+    public ResponseEntity<Page<ReservaVO>> visualizarReservas(@ModelAttribute ReservaFiltros filtros, Paginator paginator) {
+        return service.visualizarReservas(filtros, paginator);
     }
 
     @GetMapping("/{id}")

@@ -39,7 +39,7 @@ public class EstadiaSpecification {
         };
     }
 
-    public static Predicate buildDateSpecification(EstadiaFiltros filtros, CriteriaBuilder criteriaBuilder, Root<Estadia> root) {
+    private static Predicate buildDateSpecification(EstadiaFiltros filtros, CriteriaBuilder criteriaBuilder, Root<Estadia> root) {
         if (filtros.getDataEntrada().isPresent() && filtros.getDataSaida().isPresent()) {
             LocalDateTime dataHoraEntrada = filtros.getDataEntrada().get().atStartOfDay();
             LocalDateTime dataHoraSaida = filtros.getDataSaida().get().atTime(LocalTime.MAX);

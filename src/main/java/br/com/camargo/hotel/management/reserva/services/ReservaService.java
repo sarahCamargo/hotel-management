@@ -8,7 +8,8 @@ import br.com.camargo.hotel.management.commons.exceptions.MissingEntityException
 import br.com.camargo.hotel.management.hospede.domain.entities.Hospede;
 import br.com.camargo.hotel.management.hospede.services.HospedeService;
 import br.com.camargo.hotel.management.reserva.factories.ReservaFactory;
-import br.com.camargo.hotel.management.reserva.queries.IReservaQuery;
+import br.com.camargo.hotel.management.reserva.queries.repositories.IReservaQuery;
+import br.com.camargo.hotel.management.reserva.queries.filter.ReservaFiltros;
 import br.com.camargo.hotel.management.reserva.repositories.IReservaRepository;
 import br.com.camargo.hotel.management.reserva.domain.dtos.ReservaDTO;
 import br.com.camargo.hotel.management.reserva.domain.entities.Reserva;
@@ -33,8 +34,8 @@ public class ReservaService {
     private final HospedeService hospedeService;
     private final CalculadoraReservaService calculadoraReservaService;
 
-    public ResponseEntity<Page<ReservaVO>> visualizarReservas(Paginator paginator) {
-        final Page<ReservaVO> reservas = query.findAll(paginator);
+    public ResponseEntity<Page<ReservaVO>> visualizarReservas(ReservaFiltros filtros, Paginator paginator) {
+        final Page<ReservaVO> reservas = query.findAll(filtros, paginator);
 
         if (reservas == null || reservas.getContent().isEmpty()) {
             return ResponseEntity.noContent().build();
