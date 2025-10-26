@@ -21,4 +21,6 @@ public interface IReservaRepository {
     void deleteById(Long id);
 
     Optional<Reserva> findByHospedeIdAndPeriodo(Long hospedeId, LocalDate entrada, LocalDate saida);
+
+    Optional<Reserva> findReservaAtivaPorHospede(Long hospedeId);
 }

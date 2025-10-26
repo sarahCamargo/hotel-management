@@ -9,4 +9,8 @@ public class MissingEntityException extends RuntimeException {
     public MissingEntityException(String className, Long id) {
         super(String.format(MSG_ERROR_DEFAULT, className, id));
     }
+
+    public MissingEntityException(String message) {
+        super(message);
+    }
 }

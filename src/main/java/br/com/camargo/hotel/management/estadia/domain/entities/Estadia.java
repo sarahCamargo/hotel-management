@@ -1,6 +1,8 @@
 package br.com.camargo.hotel.management.estadia.domain.entities;
 
+import br.com.camargo.hotel.management.commons.exceptions.BusinessException;
 import br.com.camargo.hotel.management.reserva.domain.entities.Reserva;
+import br.com.camargo.hotel.management.reserva.domain.enums.StatusReserva;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,4 +34,13 @@ public class Estadia {
 
     @Column(name = "valor_total_final")
     private BigDecimal valorTotalFinal;
+
+    public void checkout() {
+        if (this.getDataHoraSaida() != null) {
+            throw new BusinessException("Check-out já realizado.");
+        }
+
+        this.setDataHoraSaida(LocalDateTime.now());
+        this.getReserva().setStatus(StatusReserva.FINALIZADA);
+    }
 }

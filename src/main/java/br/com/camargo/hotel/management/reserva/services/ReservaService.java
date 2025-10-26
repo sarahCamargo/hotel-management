@@ -141,4 +141,9 @@ public class ReservaService {
             throw new BusinessException("Já existe uma reserva para este hóspede nesse período.");
         }
     }
+
+    public Reserva getReservaAtivaPorHospede(Long hospedeId) {
+        return repository.findReservaAtivaPorHospede(hospedeId)
+                .orElseThrow(() -> new BusinessException("Nenhuma reserva ativa encontrada para este hóspede."));
+    }
 }

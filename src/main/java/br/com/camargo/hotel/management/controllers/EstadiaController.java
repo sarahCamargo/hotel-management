@@ -39,7 +39,7 @@ public class EstadiaController {
         return service.buscarEstadia(id);
     }
 
-    @PostMapping
+    @PostMapping("/checkin")
     @Operation(
             summary = "Realizar check-in",
             description = "Registra uma nova estadia e realiza o check-in do hóspede conforme os dados fornecidos no corpo da requisição."
@@ -48,12 +48,12 @@ public class EstadiaController {
         return service.realizarCheckIn(estadiaDTO);
     }
 
-    @PutMapping("/{id}")
+    @PostMapping("/checkout")
     @Operation(
             summary = "Realizar check-out",
-            description = "Finaliza a estadia de um hóspede e realiza o check-out conforme o ID da estadia."
+            description = "Finaliza a estadia de um hóspede e realiza o check-out conforme os dados fornecidos no corpo da requisição."
     )
-    public ResponseEntity<ResponseVO<EstadiaVO>> realizarCheckOut(@PathVariable Long id) {
-        return service.realizarCheckOut(id);
+    public ResponseEntity<ResponseVO<EstadiaVO>> realizarCheckOut(@RequestBody @Valid EstadiaDTO estadiaDTO) {
+        return service.realizarCheckOut(estadiaDTO);
     }
 }

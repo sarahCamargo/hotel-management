@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface IHospedeRepository {
@@ -17,4 +18,6 @@ public interface IHospedeRepository {
     boolean existsById(Long id);
 
     void deleteById(Long id);
+
+    List<Hospede> findByNomeOrCpfOrTelefone(String nome, String cpf, String telefone);
 }

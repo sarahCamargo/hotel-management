@@ -1,7 +1,5 @@
 package br.com.camargo.hotel.management.estadia.domain.dtos;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Setter
@@ -11,7 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 public class EstadiaDTO {
 
-    @Valid
-    @NotNull(message = "Reserva não pode ser nula")
     private Long reservaId;
+    private String nome;
+    private String cpf;
+    private String telefone;
 }

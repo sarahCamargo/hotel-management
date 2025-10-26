@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface IEstadiaRepository {
@@ -16,4 +17,8 @@ public interface IEstadiaRepository {
     Estadia save(Estadia hospede);
 
     boolean existsByReserva_IdAndDataHoraSaidaIsNull(Long reservaId);
+
+    Optional<Estadia> findByReserva_IdAndDataHoraSaidaIsNull(Long reservaId);
+
+    List<Estadia> findEstadiaAtivaPorHospede(String nome, String cpf, String telefone);
 }

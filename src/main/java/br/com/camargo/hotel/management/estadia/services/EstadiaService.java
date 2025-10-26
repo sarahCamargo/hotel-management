@@ -11,8 +11,9 @@ import br.com.camargo.hotel.management.estadia.repositories.IEstadiaRepository;
 import br.com.camargo.hotel.management.estadia.domain.dtos.EstadiaDTO;
 import br.com.camargo.hotel.management.estadia.domain.entities.Estadia;
 import br.com.camargo.hotel.management.estadia.domain.viewobjects.EstadiaVO;
+import br.com.camargo.hotel.management.hospede.domain.entities.Hospede;
+import br.com.camargo.hotel.management.hospede.services.HospedeService;
 import br.com.camargo.hotel.management.reserva.domain.entities.Reserva;
-import br.com.camargo.hotel.management.reserva.domain.enums.StatusReserva;
 import br.com.camargo.hotel.management.reserva.services.ReservaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +30,10 @@ public class EstadiaService {
 
     private final IEstadiaQuery query;
     private final IEstadiaRepository repository;
-    private final ReservaService reservaService;
     private final EstadiaFactory factory;
     private final CalculadoraEstadiaService calculadoraEstadiaService;
+    private final HospedeService hospedeService;
+    private final ReservaService reservaService;
 
     public ResponseEntity<Page<EstadiaVO>> visualizarEstadias(Paginator paginator) {
         final Page<EstadiaVO> estadias = query.findAll(paginator);
@@ -51,7 +53,23 @@ public class EstadiaService {
 
     @Transactional
     public ResponseEntity<ResponseVO<EstadiaVO>> realizarCheckIn(EstadiaDTO estadiaDTO) {
-        final Reserva reserva = reservaService.getReserva(estadiaDTO.getReservaId());
+        Reserva reserva;
+
+        if (estadiaDTO.getReservaId() != null) {
+            reserva = reservaService.getReserva(estadiaDTO.getReservaId());
+        } else {
+            List<Hospede> hospedes = hospedeService.buscarHospede(
+                    estadiaDTO.getNome(),
+                    estadiaDTO.getCpf(),
+                    estadiaDTO.getTelefone()
+            );
+
+            if (hospedes.isEmpty()) {
+                throw new BusinessException("Hóspede não encontrado para check-in.");
+            }
+
+            reserva = reservaService.getReservaAtivaPorHospede(hospedes.getFirst().getId());
+        }
 
         if (repository.existsByReserva_IdAndDataHoraSaidaIsNull(reserva.getId())) {
             throw new BusinessException("Check-in já realizado para esta reserva.");
@@ -65,14 +83,9 @@ public class EstadiaService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseVO<EstadiaVO>> realizarCheckOut(Long id) {
-        final Estadia estadia = getEstadia(id);
-
-        if (estadia.getDataHoraSaida() != null) {
-            throw new BusinessException("Check-out já realizado.");
-        }
-
-        estadia.setDataHoraSaida(LocalDateTime.now());
+    public ResponseEntity<ResponseVO<EstadiaVO>> realizarCheckOut(EstadiaDTO estadiaDTO) {
+        Estadia estadia = getEstadiaAtiva(estadiaDTO);
+        estadia.checkout();
 
         final BigDecimal valorFinal = calculadoraEstadiaService.calcularValorEstadia(
                 estadia.getReserva().getValorTotalPrevisto(),
@@ -80,7 +93,6 @@ public class EstadiaService {
         );
 
         estadia.setValorTotalFinal(valorFinal);
-        estadia.getReserva().setStatus(StatusReserva.FINALIZADA);
 
         final Estadia saved = repository.save(estadia);
 
@@ -91,7 +103,28 @@ public class EstadiaService {
                         .build());
     }
 
+
     private Estadia getEstadia(Long id) {
         return repository.findById(id).orElseThrow(() -> new MissingEntityException("Estadia", id));
+    }
+
+    private Estadia getEstadiaAtiva(EstadiaDTO estadiaDTO) {
+        if (estadiaDTO.getReservaId() != null) {
+            return repository.findByReserva_IdAndDataHoraSaidaIsNull(estadiaDTO.getReservaId())
+                    .orElseThrow(() -> new MissingEntityException("Estadia não encontrada para a reserva informada."));
+
+        }
+        if (estadiaDTO.getNome() != null || estadiaDTO.getCpf() != null || estadiaDTO.getTelefone() != null) {
+            List<Estadia> estadias = repository.findEstadiaAtivaPorHospede(
+                    estadiaDTO.getNome(), estadiaDTO.getCpf(), estadiaDTO.getTelefone());
+
+            if (estadias.isEmpty()) {
+                throw new MissingEntityException("Estadia não encontrada para o hóspede informado.");
+            }
+
+            return estadias.getFirst();
+        }
+
+        throw new BusinessException("Informe o id da estadia, id da reserva ou dados do hóspede para check-out.");
     }
 }

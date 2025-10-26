@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class HospedeService {
@@ -43,6 +45,10 @@ public class HospedeService {
         }
 
         return ResponseEntity.ok(hospede);
+    }
+
+    public List<Hospede> buscarHospede(String nome, String cpf, String telefone) {
+        return repository.findByNomeOrCpfOrTelefone(nome, cpf, telefone);
     }
 
     @Transactional
