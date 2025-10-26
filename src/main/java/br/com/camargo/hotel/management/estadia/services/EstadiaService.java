@@ -12,6 +12,7 @@ import br.com.camargo.hotel.management.estadia.domain.dtos.EstadiaDTO;
 import br.com.camargo.hotel.management.estadia.domain.entities.Estadia;
 import br.com.camargo.hotel.management.estadia.domain.viewobjects.EstadiaVO;
 import br.com.camargo.hotel.management.reserva.domain.entities.Reserva;
+import br.com.camargo.hotel.management.reserva.domain.enums.StatusReserva;
 import br.com.camargo.hotel.management.reserva.services.ReservaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -79,6 +80,7 @@ public class EstadiaService {
         );
 
         estadia.setValorTotalFinal(valorFinal);
+        estadia.getReserva().setStatus(StatusReserva.FINALIZADA);
 
         final Estadia saved = repository.save(estadia);
 
