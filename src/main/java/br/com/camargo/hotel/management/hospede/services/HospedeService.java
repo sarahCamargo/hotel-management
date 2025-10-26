@@ -97,4 +97,13 @@ public class HospedeService {
 
         return ResponseEntity.ok(hospedes);
     }
+
+    public ResponseEntity<List<HospedeVO>> listarHospedesAtivos() {
+        List<HospedeVO> hospedes = repository.findHospedesAtivos()
+                .stream()
+                .map(factory::toVO)
+                .toList();
+
+        return ResponseEntity.ok(hospedes);
+    }
 }

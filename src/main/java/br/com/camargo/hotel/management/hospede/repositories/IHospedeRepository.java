@@ -22,4 +22,6 @@ public interface IHospedeRepository {
     List<Hospede> findByNomeOrCpfOrTelefone(String nome, String cpf, String telefone);
 
     List<Hospede> findHospedesCheckOut();
+
+    List<Hospede> findHospedesAtivos();
 }

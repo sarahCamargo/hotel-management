@@ -77,4 +77,13 @@ public class HospedeController {
     public ResponseEntity<List<HospedeVO>> listarHospedesCheckOut() {
         return service.listarHospedesCheckOut();
     }
+
+    @GetMapping("/ativos")
+    @Operation(
+            summary = "Lista Hóspedes Ativos",
+            description = "Lista hóspedes que realizaram check-in e estão no hotel"
+    )
+    public ResponseEntity<List<HospedeVO>> listarHospedesAtivos() {
+        return service.listarHospedesAtivos();
+    }
 }

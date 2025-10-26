@@ -19,4 +19,11 @@ public interface HospedeRepository extends IHospedeRepository, JpaRepository<Hos
             "ORDER BY h.id, e.data_hora_saida DESC", nativeQuery = true)
     @Override
     List<Hospede> findHospedesCheckOut();
+
+    @Query("SELECT DISTINCT h FROM Hospede h " +
+            "JOIN h.reservas r " +
+            "JOIN r.estadia e " +
+            "WHERE e.dataHoraSaida IS NULL")
+    @Override
+    List<Hospede> findHospedesAtivos();
 }
